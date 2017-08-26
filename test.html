@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WASM Test</title>
+    <ol>
+      <li>
+        Use WebAssembly Explorer to write wast
+          <ul>
+            <li>Start with a module declaration</li>
+            <li>Include an export declaration to expose the function you wrote</li>
+          </ul>
+      </li>
+      <li>Assemble into wasm and download</li>
+      <li>Fetch the WebAssembly binary</li>
+      <li>Check that the response is okay and return the arrayBuffer() from the response</li>
+      <li>Return the bytes from the call to arrayBuffer(), and use the WebAssembly API to compile them into a WebAssembly module</li>
+      <li>Then take that module and instantiate it (to get a WebAssembly module instance). The instance has an exports property, and off of that we can get at our function.</li>
+    </ol>
+  </head>
+  <body>
+    <script>
+      fetch('./test.wasm')
+      .then(res => {
+        if (res.ok)
+          return res.arrayBuffer();
+        throw new Error('Unable to fetch WASM.')
+      })
+      .then(bytes => {
+        return WebAssembly.compile(bytes)
+      })
+      .then(module => {
+        return WebAssembly.instantiate(module)
+      })
+      .then(instance => {
+        window.wasmSqrt = instance.exports.sqrt
+      });
+    </script>
+  </body>
+</html>
